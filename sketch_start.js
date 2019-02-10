@@ -1,39 +1,26 @@
 let player;
-let candies;
-let candyCount = 20
-let candyScore = 0
+let bae;
+
+SCREEN_WIDTH = 600
+SCREEN_HEIGHT = 600
+
+isBaeFound = false
 
 function setup() {
-	//Put setup code here
 
-	createCanvas(600,600);
-	background(0,0,255)
+	createCanvas(SCREEN_WIDTH,SCREEN_HEIGHT);
+	background(255)
 
-	// Create player
-	player = createSprite(width/2, height/2, 50,50);
-	player.shapeColor = color(250,250,0)
-
-	// Make the candy items and put them all in a group
-	candies = new Group();
-
-	for (let i = 0; i < candyCount; i++){
-		let candyItem = createSprite(random(0,width), random(0,height), 20, 20);
-		candies.add(candyItem);
-	}
-
+	charSetup()
 
 }
 
 function draw() {
-	//Put drawing code here
-	background(0,0,255)
 
-	// Move player
-	//player.position.x = mouseX
-	//player.position.y = mouseY
+	background(255)
 
 	// Collision--THAT'S IT
-	player.collide(candies, candyCollision);
+	player.collide(bae, baeFound);
 
 	if(keyDown(LEFT_ARROW))
 		player.velocity.x = -4;
@@ -50,18 +37,43 @@ function draw() {
 		player.velocity.y = 0;
 	}
 
-	drawSprites();
+	if(isBaeFound) {
+		fill(0, 0, 0)
+		textSize(36)
+		textAlign(CENTER)
+		text("Bae found!", width/2, height/2)
+	}
 
-	fill(255)
-	textSize(36)
-	textAlign(LEFT)
-	text("Score: " + candyScore, 30, 30)
+		drawSprites();
+
+	if((isBaeFound) && (keyDown(ENTER))) {
+		nextLevel();
+
+
+	}
+
 }
 
-function candyCollision(player, candyItem){
-	//console.log("Candy collision!")
-	candyItem.remove()
+function baeFound(player, bae){
+	isBaeFound = true
 
-	candyScore += 1
-	console.log(candyScore)
+}
+
+function charSetup() {
+
+	// Create player
+	player = createSprite(width/2, height/2, 50,50);
+	player.shapeColor = color(0,0,255)
+
+	// Create bae
+	bae = createSprite(random(0, width-50), random(0,height-50), 50,50);
+	bae.shapeColor = color(255,0,0)
+
+}
+
+function nextLevel() {
+	isBaeFound = false
+	player.remove()
+	bae.remove()
+	charSetup()
 }
