@@ -15,6 +15,10 @@ SCREEN_HEIGHT = 600
 level = 0
 isBaeFound = false
 
+function preload() {
+	song = loadSound("sounds/music.mp3");
+}
+
 function setup() {
 
 	createCanvas(SCREEN_WIDTH,SCREEN_HEIGHT);
@@ -22,18 +26,12 @@ function setup() {
 
 	mainMenu()
 
-	//music = loadSound("sounds/music.mp3", playMusic)
 	//music.play()
 
 	// cars.forEach(function(element) {
 	// 	element.velocity.x = 5;
 	// });
 
-}
-
-function playMusic() {
-	music.play()
-	console.log("Playing music")
 }
 
 function mainMenu() {
@@ -46,7 +44,10 @@ function mainMenu() {
 	text("(and to progress through levels)", width/1.5, height/1.5)
 
 	if(keyDown(ENTER)) {
-		level = 5
+		if(song.isPlaying())
+			song.stop()
+		song.play()
+		level = 1
 		print(level)
 		charSetup()
 	}
