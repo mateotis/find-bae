@@ -9,7 +9,7 @@ let fakeBaes;
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
 
-level = 3
+level = 5
 isBaeFound = false
 
 function setup() {
@@ -62,15 +62,65 @@ function draw() {
 		player.velocity.y = 0;
 	}
 
+	drawSprites();
 
-	if(isBaeFound) {
+	if((isBaeFound) && (level < 6)) {
+		fill(255, 0, 0)
+		textSize(36)
+		textAlign(CENTER)
+		text("Bae found!", width/2, 50)
+	}
+
+	if(level == 1) {
 		fill(0, 0, 0)
 		textSize(36)
 		textAlign(CENTER)
-		text("Bae found!", width/2, height/2)
+		text("sometimes, i just wanna find my bae", width/2, height/2)	
 	}
 
-	drawSprites();
+	if(level == 2) {
+		fill(0, 0, 0)
+		textSize(36)
+		textAlign(CENTER)
+		text("even if walls separate us", width/2, height/2)	
+	}
+
+	if(level == 3) {
+		fill(0, 0, 0)
+		textSize(36)
+		textAlign(CENTER)
+		text("even if i have to get in harm's way", width/2, height/2)	
+	}
+
+	if(level == 4) {
+		fill(0, 0, 0)
+		textSize(36)
+		textAlign(CENTER)
+		text("even if there are many others around", width/2, height/2)	
+	}
+
+	if(level == 5) {
+		fill(0, 0, 0)
+		textSize(36)
+		textAlign(CENTER)
+		text("sometimes, i just wanna find my bae", width/2, height/2)	
+	}
+
+	if(level == 6) {
+		isBaeFound = true
+		fill(0, 0, 0)
+		textSize(36)
+		textAlign(CENTER)
+		text("and tell her i love her", width/2, height/2)	
+	}
+
+	if(level == 7) {
+		isBaeFound = true
+		fill(0, 0, 0)
+		textSize(36)
+		textAlign(CENTER)
+		text("happy valentine's day, beloved <3", width/2, height/2)	
+	}
 
 	if((isBaeFound) && (keyDown(ENTER))) {
 		nextLevel();
@@ -90,12 +140,14 @@ function charSetup() {
 
 
 	// Create player; always in the same spot
-	player = createSprite(width/2, 500, 50,50);
-	player.shapeColor = color(0,0,255)
+	if(level < 6) {
+		player = createSprite(width/2, 500, 50,50);
+		player.shapeColor = color(0,0,255)
+	}
 
 	// Create and place bae
 	if(level == 1) {
-		bae = createSprite(width/2, 300, 50,50);
+		bae = createSprite(width/2, 250, 50,50);
 		bae.shapeColor = color(255,0,0)
 	}
 	else if(level == 2) {
@@ -111,7 +163,7 @@ function charSetup() {
 		bae.shapeColor = color(255,0,0)
 	}
 	else if(level == 5) {
-		bae = createSprite(width/2, 300, 50,50);
+		bae = createSprite(width/2, 250, 50,50);
 		bae.shapeColor = color(255,0,0)
 	}	
 
@@ -152,13 +204,13 @@ function charSetup() {
 		}
 		cnt = 0
 		cars.forEach(function(car) {
-			car.velocity.x = 5;
+			car.velocity.x = 10;
 		})
 	}
 
 	if(level == 4) {
 		fakeBaes = new Group();
-		for (let i = 0; i < 30; i++){
+		for (let i = 0; i < 20; i++){
 			let fakeBae = createSprite(random(0,width), random(0,height), 50, 50);
 			fakeBae.shapeColor = color(230,0,0)
 			fakeBaes.add(fakeBae);
@@ -175,15 +227,24 @@ function nextLevel() {
 	bae.remove()
 	if(level == 2)
 		wall.remove();
-	if(level == 3)
-		console.log(cars)
-		cars.length = 0
-		console.log(cars)
+	if(level == 3) {
+		for(let i = 0; i < 3; i++) {
+			for(let i = 0; i < cars.length; i++) {
+				cars[i].remove()
+			}
+		}
+	}
 	if(level == 4) {
-		fakeBaes.forEach(function(fakeBae) {
-			fakeBae.remove()
-			console.log('removed a fakebae')
-		});
+		// fakeBaes.forEach(function(fakeBae) { // Only removes half
+		// 	fakeBae.remove()
+		// 	console.log('removed a fakebae')
+		// });
+
+		for(let i = 0; i < 5; i++) { // Extremely hacky; essentially sweeps over the array five times to remove everything
+			for(let i = 0; i < fakeBaes.length; i++) {
+				fakeBaes[i].remove()
+			}
+		}
 
 	}
 	level += 1
@@ -194,15 +255,15 @@ function switchDirections() {
 	console.log("function called")
 	cars.forEach(function(element) {
 		console.log(element.velocity.x)
-		if(element.velocity.x == 5) {
+		if(element.velocity.x == 10) {
 			console.log("right side turn")
 			element.position.x = 550
-			element.velocity.x = -5;
+			element.velocity.x = -10;
 		}
-		else if(element.velocity.x == -5) {
+		else if(element.velocity.x == -10) {
 			//console.log("left side turn")
-			element.position.x = 70
-			element.velocity.x = 5
+			element.position.x = 50
+			element.velocity.x = 10
 		}
 
 	});
