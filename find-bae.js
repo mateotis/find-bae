@@ -6,10 +6,13 @@ let borders;
 let cars;
 let fakeBaes;
 
+let timer = 0
+let timeLimit = 2
+
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
 
-level = 5
+level = 0
 isBaeFound = false
 
 function setup() {
@@ -17,7 +20,7 @@ function setup() {
 	createCanvas(SCREEN_WIDTH,SCREEN_HEIGHT);
 	background(255)
 
-	charSetup()
+	mainMenu()
 
 	//music = loadSound("sounds/music.mp3", playMusic)
 	//music.play()
@@ -33,15 +36,37 @@ function playMusic() {
 	console.log("Playing music")
 }
 
+function mainMenu() {
+	print('in here')
+	fill(0, 0, 0)
+	textSize(36)
+	textAlign(CENTER)
+	text("press enter to play", width/2, height/2)
+	textSize(20)
+	text("(and to progress through levels)", width/1.5, height/1.5)
+
+	if(keyDown(ENTER)) {
+		level = 5
+		print(level)
+		charSetup()
+	}
+}
+
 function draw() {
 
 	background(255)
 
+	if(level == 0) {
+		mainMenu()
+	}
+
 	// Collision--THAT'S IT
-	player.collide(bae, baeFound);
+	if(level >= 1) {
+		player.collide(bae, baeFound)
+		player.collide(borders)
+	}
 	if(level == 2)
 		player.collide(wall)
-	player.collide(borders)
 	if(level == 3) {
 		cars.displace(player)
 		cars.collide(borders, switchDirections)
@@ -53,10 +78,9 @@ function draw() {
 		player.velocity.x = 4;
 	else if(keyDown(UP_ARROW))
 		player.velocity.y = -4;
-		//console.log("Move up");
 	else if(keyDown(DOWN_ARROW))
 		player.velocity.y = 4;
-	else
+	else if(level >= 1)
 	{
 		player.velocity.x = 0;
 		player.velocity.y = 0;
@@ -107,20 +131,30 @@ function draw() {
 	}
 
 	if(level == 6) {
-		isBaeFound = true
 		fill(0, 0, 0)
 		textSize(36)
 		textAlign(CENTER)
-		text("and tell her i love her", width/2, height/2)	
+		text("and tell her i love her", width/2, height/2)
+		if(keyDown(ENTER))
+			isBaeFound = true
+
+	// 	timer++;
+	// 	let curTime = timeLimit - floor(timer/60);
+	// 	if(curTime === 0)
+	// 		print('time passed')
+	// 		isBaeFound = true	
 	}
 
 	if(level == 7) {
-		isBaeFound = true
 		fill(0, 0, 0)
 		textSize(36)
 		textAlign(CENTER)
-		text("happy valentine's day, beloved <3", width/2, height/2)	
+		text("happy valentine's day, beloved <3", width/2, height/2)
+		text("--máté", width/2, height/1.7)	
+		if(keyDown(ENTER))
+			isBaeFound = true
 	}
+
 
 	if((isBaeFound) && (keyDown(ENTER))) {
 		nextLevel();
@@ -235,10 +269,6 @@ function nextLevel() {
 		}
 	}
 	if(level == 4) {
-		// fakeBaes.forEach(function(fakeBae) { // Only removes half
-		// 	fakeBae.remove()
-		// 	console.log('removed a fakebae')
-		// });
 
 		for(let i = 0; i < 5; i++) { // Extremely hacky; essentially sweeps over the array five times to remove everything
 			for(let i = 0; i < fakeBaes.length; i++) {
@@ -247,8 +277,14 @@ function nextLevel() {
 		}
 
 	}
+
 	level += 1
-	charSetup()
+
+	if(level == 8) {
+		level = 0
+	}
+	else
+		charSetup()
 }
 
 function switchDirections() {
