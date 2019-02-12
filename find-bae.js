@@ -7,7 +7,7 @@ let cars;
 let fakeBaes;
 
 let timer = 0
-let timeLimit = 2
+let timeLimit = 4
 
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
@@ -15,7 +15,7 @@ SCREEN_HEIGHT = 600
 level = 0
 isBaeFound = false
 
-function preload() {
+function preload() { // Preloads the song to make sure there are no playing errors
 	song = loadSound("sounds/music.mp3");
 }
 
@@ -26,29 +26,21 @@ function setup() {
 
 	mainMenu()
 
-	//music.play()
-
-	// cars.forEach(function(element) {
-	// 	element.velocity.x = 5;
-	// });
-
 }
 
-function mainMenu() {
-	print('in here')
+function mainMenu() { // Initial screen
 	fill(0, 0, 0)
 	textSize(36)
 	textAlign(CENTER)
-	text("press enter to play", width/2, height/2)
+	text("press space to play", width/2, height/2) // A different key is used here to advance to stop insta-advancing with a single enter
 	textSize(20)
-	text("(and to progress through levels)", width/1.5, height/1.5)
+	text("(and enter to progress through levels)", width/1.5, height/1.5)
 
-	if(keyDown(ENTER)) {
-		if(song.isPlaying())
+	if(keyDown(32)) {
+		if(song.isPlaying()) // Reloads song at the start of the game
 			song.stop()
 		song.play()
 		level = 1
-		print(level)
 		charSetup()
 	}
 }
@@ -73,14 +65,15 @@ function draw() {
 		cars.collide(borders, switchDirections)
 	}
 
+	// Player controls
 	if(keyDown(LEFT_ARROW))
-		player.velocity.x = -4;
+		player.velocity.x = -3;
 	else if(keyDown(RIGHT_ARROW))
-		player.velocity.x = 4;
+		player.velocity.x = 3;
 	else if(keyDown(UP_ARROW))
-		player.velocity.y = -4;
+		player.velocity.y = -3;
 	else if(keyDown(DOWN_ARROW))
-		player.velocity.y = 4;
+		player.velocity.y = 3;
 	else if(level >= 1)
 	{
 		player.velocity.x = 0;
@@ -96,6 +89,7 @@ function draw() {
 		text("Bae found!", width/2, 50)
 	}
 
+	// The most important part!
 	if(level == 1) {
 		fill(0, 0, 0)
 		textSize(36)
@@ -131,48 +125,45 @@ function draw() {
 		text("sometimes, i just wanna find my bae", width/2, height/2)	
 	}
 
-	if(level == 6) {
+	if(level == 6) { // Since bae is not on the level anymore, there is a different advancing mechanism
+		console.log('level 6')
+		isBaeFound = false
 		fill(0, 0, 0)
 		textSize(36)
 		textAlign(CENTER)
 		text("and tell her i love her", width/2, height/2)
-		if(keyDown(ENTER))
-			isBaeFound = true
 
-	// 	timer++;
-	// 	let curTime = timeLimit - floor(timer/60);
-	// 	if(curTime === 0)
-	// 		print('time passed')
-	// 		isBaeFound = true	
+		timer++;
+		let curTime = timeLimit - floor(timer/60); // Makes sure the text isn't instantly/accidentally skipped
+		if(curTime === 2) {
+			nextLevel()
+		}
 	}
 
 	if(level == 7) {
+		console.log('level 7')
 		fill(0, 0, 0)
 		textSize(36)
 		textAlign(CENTER)
 		text("happy valentine's day, beloved <3", width/2, height/2)
 		text("--máté", width/2, height/1.7)	
 		if(keyDown(ENTER))
-			isBaeFound = true
+			nextLevel() // Resets to the menu
 	}
-
 
 	if((isBaeFound) && (keyDown(ENTER))) {
-		nextLevel();
+		nextLevel(); // Advancing through levels
 
 	}
-
-
 
 }
 
-function baeFound(player, bae){
+function baeFound(player, bae){ // The function and the variable names should be the other way around, but oh well
+	
 	isBaeFound = true
-
 }
 
 function charSetup() {
-
 
 	// Create player; always in the same spot
 	if(level < 6) {
@@ -202,15 +193,13 @@ function charSetup() {
 		bae.shapeColor = color(255,0,0)
 	}	
 
-	console.log(level)
+	// Walls
 	if(level == 2) {
-		console.log(level)
-		console.log("no")
 		wall = createSprite(0, 200, 1300,30);
 		wall.shapeColor = color(0,0,0)
 	}
 
-
+	// Borders are also always present
 	borders = new Group();
 	let westBorder = createSprite(0, 0, 5,1500);
 	westBorder.shapeColor = color(0,0,0)
@@ -227,6 +216,7 @@ function charSetup() {
 		borders.add(southBorder)
 	}
 
+	// Spawns cars and puts them into motion
 	if(level == 3) {
 		cars = new Group();
 		let cnt = 0
@@ -234,7 +224,6 @@ function charSetup() {
 			let car = createSprite(70, 500 - cnt, 70, 50);
 			car.shapeColor = color(0,255,0)
 			cars.add(car);
-			console.log(car.position)
 			cnt += 100
 		}
 		cnt = 0
@@ -243,6 +232,7 @@ function charSetup() {
 		})
 	}
 
+	// Creates fakebaes
 	if(level == 4) {
 		fakeBaes = new Group();
 		for (let i = 0; i < 20; i++){
@@ -256,14 +246,13 @@ function charSetup() {
 }
 
 function nextLevel() {
-	console.log("in nextlevel")
 	isBaeFound = false
 	player.remove()
 	bae.remove()
 	if(level == 2)
 		wall.remove();
-	if(level == 3) {
-		for(let i = 0; i < 3; i++) {
+	if(level == 3) { 
+		for(let i = 0; i < 3; i++) { // Extremely hacky; essentially sweeps over the array five times to remove everything
 			for(let i = 0; i < cars.length; i++) {
 				cars[i].remove()
 			}
@@ -271,7 +260,7 @@ function nextLevel() {
 	}
 	if(level == 4) {
 
-		for(let i = 0; i < 5; i++) { // Extremely hacky; essentially sweeps over the array five times to remove everything
+		for(let i = 0; i < 5; i++) { // Yeeah...
 			for(let i = 0; i < fakeBaes.length; i++) {
 				fakeBaes[i].remove()
 			}
@@ -281,24 +270,21 @@ function nextLevel() {
 
 	level += 1
 
-	if(level == 8) {
+	if(level == 8) { // Upon reaching the end, go back to the menu
 		level = 0
+		mainMenu()
 	}
 	else
-		charSetup()
+		charSetup() // Else, spawn the next level's objects
 }
 
-function switchDirections() {
-	console.log("function called")
+function switchDirections() { // Solely dedicated to making the cars go back and forth
 	cars.forEach(function(element) {
-		console.log(element.velocity.x)
 		if(element.velocity.x == 10) {
-			console.log("right side turn")
 			element.position.x = 550
 			element.velocity.x = -10;
 		}
 		else if(element.velocity.x == -10) {
-			//console.log("left side turn")
 			element.position.x = 50
 			element.velocity.x = 10
 		}
